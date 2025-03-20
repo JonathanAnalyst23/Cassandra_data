@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra-node
+    restart: always
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=TestCluster
+      - CASSANDRA_NUM_TOKENS=256
+      - CASSANDRA_SEEDS=cassandra-node
+    volumes:
+      - ./cassandra_data:/var/lib/cassandra
+
+  client:
+    build: ./Client
+    container_name: cassandra-client
+    depends_on:
+      - cassandra
+    environment:
+      - CASSANDRA_HOST=cassandra
+    volumes:
+      - ./Client:/app
